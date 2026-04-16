@@ -1,0 +1,44 @@
+name: Run Langchain Project
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  run-langchain:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Chat Model
+      run: |
+        echo "=== Running Chat Model ==="
+        python 2.ChatModels/1_chatmodel_hg_local.py
+      continue-on-error: true  # Continue even if this fails
+
+    - name: Run Embedding Model
+      run: |
+        echo "=== Running Embedding Model ==="
+        python 3.Embedding_Models/Embedding_hf_local.py
+      continue-on-error: true  # Continue even if this fails
+
+    - name: Run Main Text Processing
+      run: |
+        echo "=== Running Main Text Processing ==="
+        python text.py
+      continue-on-error: true  # Continue even if this fails
